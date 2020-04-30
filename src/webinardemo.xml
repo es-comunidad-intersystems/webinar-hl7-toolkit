@@ -1,0 +1,287 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="IRIS" version="26" zv="IRIS for UNIX (Ubuntu Server LTS for x86-64 Containers) 2020.1 (Build 215U)" ts="2020-04-22 19:38:37">
+<Class name="Demo.ERADTA06ToTransferADTA02DTL">
+<Super>Ens.DataTransformDTL</Super>
+<TimeChanged>65491,70634.414785</TimeChanged>
+<TimeCreated>65491,68369.505199</TimeCreated>
+<DependsOn>EnsLib.HL7.Message</DependsOn>
+
+<Parameter name="IGNOREMISSINGSOURCE">
+<Default>1</Default>
+</Parameter>
+
+<Parameter name="REPORTERRORS">
+<Default>1</Default>
+</Parameter>
+
+<Parameter name="TREATEMPTYREPEATINGFIELDASNULL">
+<Default>0</Default>
+</Parameter>
+
+<XData name="DTL">
+<XMLNamespace>http://www.intersystems.com/dtl</XMLNamespace>
+<Data><![CDATA[
+<transform sourceClass='EnsLib.HL7.Message' targetClass='EnsLib.HL7.Message' sourceDocType='2.3.1:ADT_A06' targetDocType='2.3.1:ADT_A02' create='new' language='objectscript' >
+<assign value='source.{MSH}' property='target.{MSH}' action='set' />
+<assign value='source.{EVN}' property='target.{EVN}' action='set' />
+<assign value='source.{PID}' property='target.{PID}' action='set' />
+<assign value='source.{PD1}' property='target.{PD1}' action='set' />
+<assign value='source.{PV1}' property='target.{PV1}' action='set' />
+<assign value='source.{PV2}' property='target.{PV2}' action='set' />
+<assign value='source.{DB1()}' property='target.{DB1()}' action='set' />
+<assign value='source.{OBX()}' property='target.{OBX()}' action='set' />
+<assign value='"A02"' property='target.{MSH:MessageType.triggerevent}' action='set' />
+<assign value='"A02"' property='target.{EVN:EventTypeCode}' action='set' />
+<assign value='"NONE"' property='target.{MSH:Security}' action='set' />
+<assign value='source.{PID:PatientIdentifierList().ID}' property='target.{PID:AlternatePatientIDPID().ID}' action='set' />
+<if condition='source.{PID:PrimaryLanguage.identifier}=""' >
+<true>
+<assign value='"UNKNOWN"' property='target.{PID:PrimaryLanguage.identifier}' action='set' />
+</true>
+</if>
+<assign value='"I"' property='target.{PV1:PatientClass}' action='set' />
+</transform>
+]]></Data>
+</XData>
+</Class>
+
+
+<Class name="Demo.ERORMO01ToPharmORM0O1DTL">
+<Super>Ens.DataTransformDTL</Super>
+<TimeChanged>65491,68143.584171</TimeChanged>
+<TimeCreated>65491,68139.643495</TimeCreated>
+<DependsOn>EnsLib.HL7.Message</DependsOn>
+
+<Parameter name="IGNOREMISSINGSOURCE">
+<Default>1</Default>
+</Parameter>
+
+<Parameter name="REPORTERRORS">
+<Default>1</Default>
+</Parameter>
+
+<Parameter name="TREATEMPTYREPEATINGFIELDASNULL">
+<Default>0</Default>
+</Parameter>
+
+<XData name="DTL">
+<XMLNamespace>http://www.intersystems.com/dtl</XMLNamespace>
+<Data><![CDATA[
+<transform sourceClass='EnsLib.HL7.Message' targetClass='EnsLib.HL7.Message' sourceDocType='2.3.1:ORM_O01' targetDocType='2.3.1:ORM_O01' create='new' language='objectscript' >
+<assign value='source.{MSH}' property='target.{MSH}' action='set' />
+<assign value='source.{NTE()}' property='target.{NTE()}' action='set' />
+<assign value='source.{PIDgrp}' property='target.{PIDgrp}' action='set' />
+<assign value='source.{ORCgrp()}' property='target.{ORCgrp()}' action='set' />
+</transform>
+]]></Data>
+</XData>
+</Class>
+
+
+<Class name="Demo.FromER">
+<Description>
+</Description>
+<Super>Ens.Rule.Definition</Super>
+<TimeChanged>65491,70653.508281</TimeChanged>
+<TimeCreated>65491,66021.431762</TimeCreated>
+
+<Parameter name="RuleAssistClass">
+<Default>EnsLib.HL7.MsgRouter.RuleAssist</Default>
+</Parameter>
+
+<XData name="RuleDefinition">
+<XMLNamespace>http://www.intersystems.com/rule</XMLNamespace>
+<Data><![CDATA[
+<ruleDefinition alias="Demo.From_ER" context="EnsLib.HL7.MsgRouter.RoutingEngine" production="FHIRD1PKG.FoundationProduction">
+<ruleSet name="" effectiveBegin="" effectiveEnd="">
+<rule name="">
+<constraint name="source" value="From_ER"></constraint>
+<constraint name="docCategory" value="2.3.1"></constraint>
+<constraint name="docName" value="ORM_O01"></constraint>
+<when condition="(HL7.{MSH:5.1}=&quot;PHARMACY&quot;)&amp;&amp;(HL7.{MSH:ReceivingFacility.namespaceID} StartsWith &quot;262&quot;)">
+<send transform="Demo.ERORMO01ToPharmORM0O1DTL" target="To_Pharma"></send>
+<return></return>
+</when>
+</rule>
+<rule name="" disabled="false">
+<constraint name="source" value="From_ER"></constraint>
+<constraint name="docCategory" value="2.3.1"></constraint>
+<constraint name="docName" value="ADT_A06"></constraint>
+<when condition="1">
+<send transform="Demo.ERADTA06ToTransferADTA02DTL" target="To_PAS"></send>
+<return></return>
+</when>
+</rule>
+</ruleSet>
+</ruleDefinition>
+]]></Data>
+</XData>
+</Class>
+
+
+<Project name="EnsExportProduction_2020-04-22 19-38-09_177+0" LastModified="2020-04-22 19:38:37.513031">
+  <ProjectDescription>Studio Project generated from Production 'FHIRD1PKG.FoundationProduction' at 2020-04-22 19:38:09.177 UTC</ProjectDescription>
+  <Items>
+    <ProjectItem name="Demo.ERADTA06ToTransferADTA02DTL" type="CLS"></ProjectItem>
+    <ProjectItem name="Demo.ERORMO01ToPharmORM0O1DTL" type="CLS"></ProjectItem>
+    <ProjectItem name="Demo.FromER" type="CLS"></ProjectItem>
+    <ProjectItem name="FHIRD1PKG.FoundationProduction" type="CLS"></ProjectItem>
+    <ProjectItem name="FHIRDemo.HL7TransformProcess" type="CLS"></ProjectItem>
+    <ProjectItem name="EnsExportNotes.EnsExportProduction_2020-04-22 19-38-09_177+0.PTD" type="PTD"></ProjectItem>
+  </Items>
+</Project>
+
+
+<Class name="FHIRD1PKG.FoundationProduction">
+<ProcedureBlock>0</ProcedureBlock>
+<Super>Ens.Production</Super>
+<TimeChanged>65491,66021.709231</TimeChanged>
+<TimeCreated>65099,53890.502221</TimeCreated>
+
+<XData name="ProductionDefinition">
+<Data><![CDATA[
+<Production Name="FHIRD1PKG.FoundationProduction" TestingEnabled="true" LogGeneralTraceEvents="false">
+  <Description></Description>
+  <ActorPoolSize>1</ActorPoolSize>
+  <Item Name="Ens.Activity.Operation.Local" Category="Demo" ClassName="Ens.Activity.Operation.Local" PoolSize="1" Enabled="true" Foreground="false" Comment="" LogTraceEvents="false" Schedule="">
+  </Item>
+  <Item Name="HS.Test.Service" Category="Demo" ClassName="HS.Test.Service" PoolSize="0" Enabled="true" Foreground="false" Comment="" LogTraceEvents="false" Schedule="">
+    <Setting Target="Host" Name="InactivityTimeout">0</Setting>
+    <Setting Target="Host" Name="PIXmConsumerOperationsSTU3">HS.FHIR.PIXm.Consumer.Operations.STU3</Setting>
+    <Setting Target="Host" Name="PDQmConsumerOperationsSTU3">HS.FHIR.PDQm.Consumer.Operations.STU3</Setting>
+    <Setting Target="Host" Name="MHDConsumerOperationsSTU3">HS.FHIR.MHD.Consumer.Operations.STU3</Setting>
+    <Setting Target="Host" Name="MHDSourceOperationsSTU3">HS.FHIR.MHD.DocumentSource.Operations.STU3</Setting>
+  </Item>
+  <Item Name="HS.FHIR.Service.STU3" Category="Demo" ClassName="HS.FHIR.Service" PoolSize="0" Enabled="true" Foreground="false" Comment="" LogTraceEvents="false" Schedule="">
+    <Setting Target="Host" Name="TargetConfigName">HS.FHIR.Server.Process.STU3</Setting>
+    <Setting Target="Host" Name="InactivityTimeout">0</Setting>
+    <Setting Target="Host" Name="FHIRVersion"></Setting>
+    <Setting Target="Host" Name="FormatFHIROutput">1</Setting>
+  </Item>
+  <Item Name="HS.FHIR.REST.Operation" Category="Demo" ClassName="HS.FHIR.REST.Operation" PoolSize="1" Enabled="true" Foreground="false" Comment="" LogTraceEvents="false" Schedule="">
+    <Setting Target="Host" Name="MetadataClass">HS.FHIR.InteractionMetadata</Setting>
+    <Setting Target="Host" Name="InactivityTimeout">0</Setting>
+  </Item>
+  <Item Name="HS.Util.Trace.Operations" Category="Demo" ClassName="HS.Util.Trace.Operations" PoolSize="1" Enabled="true" Foreground="false" Comment="" LogTraceEvents="false" Schedule="">
+    <Setting Target="Host" Name="InactivityTimeout">0</Setting>
+  </Item>
+  <Item Name="HS.FHIR.Server.Process.STU3" Category="Demo" ClassName="HS.FHIR.Server.Process" PoolSize="1" Enabled="true" Foreground="false" Comment="" LogTraceEvents="false" Schedule="">
+    <Setting Target="Host" Name="TargetConfigName">HS.FHIR.Repository.Operations.STU3</Setting>
+    <Setting Target="Host" Name="ResourceSchemaRoot">HS.FHIR.vSTU3.Model.Resource</Setting>
+    <Setting Target="Host" Name="InactivityTimeout">0</Setting>
+  </Item>
+  <Item Name="HS.FHIR.Repository.Operations.STU3" Category="Demo" ClassName="HS.FHIR.vSTU3.Repository.Operations" PoolSize="1" Enabled="true" Foreground="false" Comment="" LogTraceEvents="false" Schedule="">
+    <Setting Target="Host" Name="ArchiveIO">1</Setting>
+    <Setting Target="Host" Name="TraceOperations">*FULL*</Setting>
+  </Item>
+  <Item Name="HS.FHIR.DTL.Util.HC.SDA3.FHIR.Process" Category="Demo" ClassName="HS.FHIR.DTL.Util.HC.SDA3.FHIR.Process" PoolSize="1" Enabled="true" Foreground="false" Comment="" LogTraceEvents="true" Schedule="">
+    <Setting Target="Host" Name="TargetConfigName">HS.FHIR.Server.Process.STU3</Setting>
+  </Item>
+  <Item Name="HL7toSDAProcess" Category="Demo" ClassName="FHIRDemo.HL7TransformProcess" PoolSize="1" Enabled="true" Foreground="false" Comment="" LogTraceEvents="false" Schedule="">
+  </Item>
+  <Item Name="From_HIS" Category="Demo" ClassName="EnsLib.HL7.Service.FileService" PoolSize="1" Enabled="true" Foreground="false" Comment="" LogTraceEvents="false" Schedule="">
+    <Setting Target="Host" Name="MessageSchemaCategory">2.3.1</Setting>
+    <Setting Target="Host" Name="TargetConfigNames">HL7toSDAProcess</Setting>
+    <Setting Target="Adapter" Name="FilePath">/durable/initial-demo/In/HIS/</Setting>
+    <Setting Target="Adapter" Name="ArchivePath">/durable/initial-demo/Out/</Setting>
+    <Setting Target="Adapter" Name="FileSpec">*.hl7</Setting>
+  </Item>
+  <Item Name="To_Pharma" Category="" ClassName="EnsLib.HL7.Operation.FileOperation" PoolSize="1" Enabled="true" Foreground="false" Comment="" LogTraceEvents="false" Schedule="">
+    <Setting Target="Adapter" Name="FilePath">/durable/initial-demo/Out/</Setting>
+    <Setting Target="Host" Name="Filename">Pharma.txt</Setting>
+  </Item>
+  <Item Name="To_PAS" Category="" ClassName="EnsLib.HL7.Operation.FileOperation" PoolSize="1" Enabled="true" Foreground="false" Comment="" LogTraceEvents="false" Schedule="">
+    <Setting Target="Adapter" Name="FilePath">/durable/initial-demo/Out/</Setting>
+    <Setting Target="Host" Name="Filename">PAS.txt</Setting>
+  </Item>
+  <Item Name="From_ER" Category="" ClassName="EnsLib.HL7.Service.FileService" PoolSize="1" Enabled="true" Foreground="false" Comment="" LogTraceEvents="false" Schedule="">
+    <Setting Target="Host" Name="MessageSchemaCategory">2.3.1</Setting>
+    <Setting Target="Host" Name="TargetConfigNames">From_ER_Router</Setting>
+    <Setting Target="Adapter" Name="FilePath">/durable/initial-demo/In/ER/</Setting>
+    <Setting Target="Adapter" Name="ArchivePath">/durable/initial-demo/Out/</Setting>
+    <Setting Target="Adapter" Name="FileSpec">*.hl7</Setting>
+  </Item>
+  <Item Name="From_ER_Router" Category="" ClassName="EnsLib.HL7.MsgRouter.RoutingEngine" PoolSize="1" Enabled="true" Foreground="false" Comment="" LogTraceEvents="false" Schedule="">
+    <Setting Target="Host" Name="BusinessRuleName">Demo.FromER</Setting>
+  </Item>
+</Production>
+]]></Data>
+</XData>
+</Class>
+
+
+<Class name="FHIRDemo.HL7TransformProcess">
+<Description>
+This is a custom business process that transforms an HL7 message to SDA format (an internal healthcare data format for InterSystems IRIS for Health).
+To use this class, add a business process with this class to the production and configure the target. The default target will send the SDA to a component
+that converts the data to FHIR.
+</Description>
+<ClassType>persistent</ClassType>
+<Super>Ens.BusinessProcess</Super>
+<TimeChanged>65133,64970.65163</TimeChanged>
+<TimeCreated>64019,42006.141152</TimeCreated>
+
+<Parameter name="SETTINGS">
+<Default><![CDATA[TargetConfigName:Basic:selector?context={Ens.ContextSearch/ProductionItems?targets=1&productionName=@productionId},TransformFile:Basic]]></Default>
+</Parameter>
+
+<Property name="TargetConfigName">
+<Type>Ens.DataType.ConfigName</Type>
+<InitialExpression>"HS.FHIR.DTL.Util.HC.SDA3.FHIR.Process"</InitialExpression>
+</Property>
+
+<Method name="OnRequest">
+<Description>
+Transforms an HL7 message to SDA, an internal healthcare format for InterSystems IRIS for Health.</Description>
+<FormalSpec>pRequest:EnsLib.HL7.Message,*pResponse:Ens.Response</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	set tSC = $$$OK
+	try {
+         set tSC = ##class(HS.Gateway.HL7.HL7ToSDA3).GetSDA(pRequest,.tSDA)
+         set tSC = ..SendRequestSync(..TargetConfigName,##class(Ens.StreamContainer).%New(tSDA),.tResponse)
+	} catch ex {
+		set tSC = ex.AsStatus()
+	}
+	quit tSC
+]]></Implementation>
+</Method>
+
+<Storage name="Default">
+<Type>%Storage.Persistent</Type>
+<DefaultData>HL7TransformProcessDefaultData</DefaultData>
+<Data name="HL7TransformProcessDefaultData">
+<Subscript>"HL7TransformProcess"</Subscript>
+<Value name="1">
+<Value>TargetConfigName</Value>
+</Value>
+</Data>
+</Storage>
+</Class>
+
+
+<Document name="EnsExportNotes.EnsExportProduction_2020-04-22 19-38-09_177+0.PTD"><ProjectTextDocument name="EnsExportNotes.EnsExportProduction_2020-04-22 19-38-09_177+0" description="Export Notes for export EnsExportProduction_2020-04-22 19-38-09_177+0">
+<![CDATA[<Deployment>
+<Creation>
+<Machine>416D15E22065</Machine>
+<Instance>IRIS</Instance>
+<Namespace>WEBINARD1</Namespace>
+<SourceProduction>FHIRD1PKG.FoundationProduction</SourceProduction>
+<Username>SuperUser</Username>
+<UTC>2020-04-22 19:38:37.508</UTC>
+</Creation>
+<Notes>
+</Notes>
+<Contents>
+<ExportProject>EnsExportProduction_2020-04-22 19-38-09_177+0</ExportProject>
+<Item num="1">Demo.ERADTA06ToTransferADTA02DTL.CLS</Item>
+<Item num="2">Demo.ERORMO01ToPharmORM0O1DTL.CLS</Item>
+<Item num="3">Demo.FromER.CLS</Item>
+<Item num="4">FHIRD1PKG.FoundationProduction.CLS</Item>
+<Item num="5">FHIRDemo.HL7TransformProcess.CLS</Item>
+</Contents>
+<ProductionClassInExport>FHIRD1PKG.FoundationProduction</ProductionClassInExport>
+</Deployment>
+
+]]></ProjectTextDocument>
+</Document></Export>
