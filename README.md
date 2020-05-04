@@ -1,11 +1,11 @@
 # hl7webinar
-En este repositorio esta el codigo/configuracion usada en el webinar del 29 de abirl/2020. 
+En este repositorio esta el código/configuración usada en el webinar del 29 de abril/2020. 
 
 # montar la demo
 1) bajar el contenido de la carpeta src para una carpeta local
 2) bajar del docker hub un imagen de InterSystems IRIS for Health:
 docker run --name iris4health -d --publish 51773:51773 --publish 52773:52773 --volume /"mi carpet local donde me he bajado el contenido de src":/durable store/intersystems/irishealth-community:2020.1.0.215.0
-3) Crear un nuevo namespace con una producción estandar FHIR STU3. Desde el terminal:
+3) Crear un nuevo namespace con una producción estándar FHIR STU3. Desde el terminal:
 ~~~    
 zn "HSLIB"  
 do ##class(HS.HC.Util.Installer.FHIR).Install()  
@@ -25,5 +25,5 @@ Continue with Installation? (Y/N) Y
 zn "DEMO1"  
 do ##class(%SYSTEM.OBJ).Load("carpet local donde me he bajado el contenido de src/webinardemo.xml","cdk")  
 ~~~
-5) Desde el Portal de Administración, acceder al namespace creado y iniciar la producción imortada.
-6) Probar con los archivos de la carpeta IN.
+5) Desde el Portal de Administración, acceder al namespace creado y iniciar la producción importada.
+6) Probar con los archivos adjuntos. El ADT_A06 servirá para probar la producción HL7 - carpeta from_er. El archivo ADT_A01 permite probar la producción hl7-fhir - carpeta from_his.
