@@ -5,7 +5,8 @@ En este repositorio esta el código/configuración usado en el webinar HL7 Toolk
 1) descargar el contenido de la carpeta src a una carpeta local. En el ejemplo usaremos `$localfolder`
 2) descargar la imagen del docker hub de InterSystems IRIS for Health:
 ```bash
-docker run --name iris4health -d --publish 51773:51773 --publish 52773:52773 --volume /$localfolder:/durable store/intersystems/irishealth-community:2020.1.0.215.0
+docker run --name iris4health -d --publish 51773:51773 --publish 52773:52773 
+           --volume /$localfolder:/durable store/intersystems/irishealth-community:2020.1.0.215.0
 ```
 3) Crear un nuevo namespace con una producción estándar FHIR STU3. 
 Desde el terminal:
